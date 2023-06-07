@@ -19,7 +19,7 @@ func TestGetTimeError(t *testing.T) {
 		url: "http://exampledoesntexistreallyy.io",
 	}
 	u.getTime()
-	if u.t != -1{
+	if u.t != -1 {
 		t.Errorf("wanted an error, got nothing")
 	}
 }
@@ -27,18 +27,13 @@ func TestGetTimeError(t *testing.T) {
 func TestGetTimeArray(t *testing.T) {
 	c := []string{
 		"http://google.com",
-		"http://youtube.com",
-		"http://facebook.com",
-		"http://baidu.com",
-		"http://wikipedia.org",
-		"http://qq.com",
 		"http://taobao.com",
 	}
-	got := GetTime(c)
-	for k, v := range(got) {
+	got, max, min := GetTime(c)
+	for k, v := range got {
 		t.Logf("time to reach %v equals %v", k, v)
 	}
+	if min != c[0] || max != c[1] {
+		t.Errorf("wrong latency")
+	}
 }
-
-
-

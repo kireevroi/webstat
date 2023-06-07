@@ -1,14 +1,17 @@
+/*
+	Модуль считывания файла и парсинга
+*/
+
 package urlcache
 
 import (
 	"bufio"
+	"log"
 	"net/url"
 	"os"
-	"log"
 )
 
-
-
+// ReadFile парсит файл со списком сайтов
 func ReadFile(path string) ([]string, error) {
 	f, err := os.Open(path)
 	if err != nil {
@@ -33,6 +36,7 @@ func ReadFile(path string) ([]string, error) {
 	return c, nil
 }
 
+// CleanURL проверяет URL на минимальную валидность и добавляет http если нет
 func CleanURL(rawUrl string) (string, error) {
 	u, err := url.Parse(rawUrl)
 	if err != nil {

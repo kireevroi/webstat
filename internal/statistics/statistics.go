@@ -1,15 +1,18 @@
+/*
+	Простенький модуль для взаимодействия со счетчиком (Статистика)
+*/
+
 package statistics
 
 import "sync"
 
-
 type Stats struct {
 	stat uint64
-	mx sync.Mutex
+	mx   sync.Mutex
 }
 
 type StatMap struct {
-	m map[string]uint64
+	m  map[string]uint64
 	mx sync.Mutex
 }
 
@@ -19,10 +22,9 @@ func (s *Stats) Set() {
 	s.mx.Unlock()
 }
 
-func (s *Stats) Get() uint64{
+func (s *Stats) Get() uint64 {
 	return s.stat
 }
-
 
 func (sm *StatMap) Init() {
 	sm.m = make(map[string]uint64)
@@ -34,6 +36,6 @@ func (sm *StatMap) Set(url string) {
 	sm.mx.Unlock()
 }
 
-func (sm *StatMap) Get(url string) uint64{
+func (sm *StatMap) Get(url string) uint64 {
 	return sm.m[url]
 }

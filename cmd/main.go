@@ -1,16 +1,18 @@
 package main
 
 import (
+	"time"
+
 	"github.com/gin-gonic/gin"
-	
-	"github.com/kireevroi/webstat/internal/vdb"
+
 	"github.com/kireevroi/webstat/internal/endpoints"
 	"github.com/kireevroi/webstat/internal/statistics"
+	"github.com/kireevroi/webstat/internal/vdb"
 )
 
 func main() {
 	d := &vdb.DataBase{}
-	go d.Init("list.txt")
+	go d.RunVDB("list.txt", time.Minute)
 
 	pingstat := &statistics.StatMap{}
 	pingstat.Init()

@@ -1,16 +1,20 @@
+/*
+	Обработчики для Gin
+*/
 package endpoints
 
 import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/kireevroi/webstat/internal/vdb"
 	"github.com/kireevroi/webstat/internal/statistics"
 	"github.com/kireevroi/webstat/internal/urlcache"
+	"github.com/kireevroi/webstat/internal/vdb"
 )
 
+// ApiMiddleware отвечает за миддлвейр связанный с примитивной авторизацией админа
 func ApiMiddleware(key string) gin.HandlerFunc {
-	return func (c *gin.Context) {
+	return func(c *gin.Context) {
 		api := c.Query("key")
 		if api == key {
 			c.Set("allowed", true)
@@ -19,7 +23,7 @@ func ApiMiddleware(key string) gin.HandlerFunc {
 	}
 }
 
-
+// WebsiteTimeHandler возвращает время доступа для сайта в запросе
 func WebsiteTimeHandler(d *vdb.DataBase, sm *statistics.StatMap) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		website := c.Query("website")
@@ -33,12 +37,13 @@ func WebsiteTimeHandler(d *vdb.DataBase, sm *statistics.StatMap) gin.HandlerFunc
 			c.String(http.StatusBadRequest, "Bad URL Query")
 			return
 		}
-		
+
 		st := d.SearchTime(u)
 		c.String(http.StatusOK, "%s", st)
 	}
 }
 
+// MaxHandler возвращает максимальное время доступа
 func MaxHandler(d *vdb.DataBase, s *statistics.Stats) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if _, ok := c.Get("allowed"); ok {
@@ -51,6 +56,7 @@ func MaxHandler(d *vdb.DataBase, s *statistics.Stats) gin.HandlerFunc {
 	}
 }
 
+// MinHandler возвращает минимальное время доступа
 func MinHandler(d *vdb.DataBase, s *statistics.Stats) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if _, ok := c.Get("allowed"); ok {
@@ -62,4 +68,3 @@ func MinHandler(d *vdb.DataBase, s *statistics.Stats) gin.HandlerFunc {
 		c.String(http.StatusOK, "%s", max)
 	}
 }
-

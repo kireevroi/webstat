@@ -5,6 +5,7 @@
 package vdb
 
 import (
+	"fmt"
 	"log"
 	"time"
 
@@ -13,42 +14,32 @@ import (
 )
 
 type DataBase struct {
-	m map[string]time.Duration
+	m   map[string]time.Duration
+	max string
+	min string
 }
 
-// TODO: Refactor
-func (d *DataBase) Init(path string) {
+// RunVDB запускает тикер на заданное время t и парсит заданный файл в path
+func (d *DataBase) RunVDB(path string, t time.Duration) {
 	log.Println("Starting virtual database")
 
-	ul, err := urlcache.ReadFile(path)
-	if err != nil {
-		log.Printf("error opening file: %v", err)
-	}
-	d.m = status.GetTime(ul)
-
-	for k, v := range d.m {
-		log.Printf("%v %v", k, v)
-	}
-	ticker := time.NewTicker(time.Second * 60)
+	ticker := time.NewTicker(t)
 	defer ticker.Stop()
-	for {
-		select {
-		case <-ticker.C:
-			tmpul := ul
-			for {
-				tmpul, err = urlcache.ReadFile("list.txt")
-				if err != nil {
-					log.Printf("error opening file: %v", err)
-					continue
-				}
-				break
+	for ; true; <-ticker.C {
+		var ul []string
+		var err error
+		for {
+			ul, err = urlcache.ReadFile(path)
+			if err != nil {
+				log.Printf("error opening file: %v", err)
+				continue
 			}
-			d.m = status.GetTime(tmpul)
-			for k, v := range d.m {
-				log.Printf("%v %v", k, v)
-			}
-			ul = tmpul
+			break
 		}
+		d.m, d.max, d.min = status.GetTime(ul)
+		// for k, v := range d.m { // опциональная печать полученных данных
+		// 	log.Printf("%v %v", k, v)
+		// }
 	}
 }
 
@@ -57,9 +48,9 @@ func (d *DataBase) SearchTime(url string) string {
 }
 
 func (d *DataBase) MinTime() string {
-	return status.MinTime(d.m)
+	return fmt.Sprint(d.min)
 }
 
 func (d *DataBase) MaxTime() string {
-	return status.MaxTime(d.m)
+	return fmt.Sprint(d.max)
 }

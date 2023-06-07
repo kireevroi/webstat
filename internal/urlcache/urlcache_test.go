@@ -18,7 +18,7 @@ func TestReadFile(t *testing.T) {
 	if err != nil {
 		t.Errorf("got error: %v", err)
 	}
-	for i, v := range(got) {
+	for i, v := range got {
 		if want[i] != v {
 			t.Errorf("wanted: %v, got: %v", want[i], v)
 		}
