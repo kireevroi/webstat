@@ -1,4 +1,5 @@
 
+.PHONY: all build run test dep vet lint clean
 
 all: run
 
